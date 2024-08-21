@@ -1,5 +1,11 @@
 <template>
     <div class="divComGrpCodList">
+        <NoticeModal
+            v-if="modalState.modalState"
+            @searchList="onApiSuccess"
+            @modalClose="modalClose"
+            :notieSeq="notieSeq"
+        />
         <table>
             <colgroup>
                 <col width="10%" />
@@ -17,8 +23,8 @@
                 </tr>
             </thead>
             <tbody>
-                <template v-if="data">
-                    <template v-if="data.listCount == 0">
+                <template v-if="noticeList">
+                    <template v-if="noticeList.listCount == 0">
                         <tr>
                             <td colspan="7">
                                 일치하는 검색 결과가 없습니다
@@ -27,8 +33,9 @@
                     </template>
                     <template v-else>
                         <tr
-                            v-for="item in data.noticeList"
+                            v-for="item in noticeList.noticeList"
                             :key="item.noti_seq"
+                            @click="handlerDetail(item.noti_seq)"
                         >
                             <td>{{ item.noti_seq }}</td>
                             <td>
@@ -48,12 +55,16 @@
 import { useQuery } from "@tanstack/vue-query";
 import axios from "axios";
 import { useRoute } from "vue-router";
+import NoticeModal from "./NoticeModal.vue";
+import { useModalStore } from "@/stores/modalState";
 
+const modalState = useModalStore();
 const cPage = ref(1);
 const pageSize = ref(5);
+const notieSeq = ref(0);
 const route = useRoute();
-const searchKeyWord = ref(route.query);
 
+// 조회
 const searchList = async () => {
     let param = new URLSearchParams({
         cpage: cPage.value,
@@ -70,8 +81,8 @@ const searchList = async () => {
     return result.data;
 };
 
-const { data, refetch } = useQuery({
-    queryKey: ["user", pageSize, cPage, searchKeyWord.value],
+const { data: noticeList, refetch } = useQuery({
+    queryKey: ["user", cPage],
     queryFn: searchList
 });
 
@@ -81,6 +92,34 @@ watch(
         refetch();
     }
 );
+
+// 상세조회
+const handlerDetail = (seq) => {
+    if (seq) notieSeq.value = seq;
+    modalState.setModalState();
+};
+
+const onApiSuccess = () => {
+    notieSeq.value = 0;
+    refetch();
+};
+
+const modalClose = () => {
+    notieSeq.value = 0;
+};
+
+// const searchDetail = async (param) => {
+//     const result = await axios.post(
+//         "/api/board/noticeDetail.do",
+//         { noticeSeq: param }
+//     );
+//     return result.data;
+// };
+
+// const { data: noticeDetail } = useQuery({
+//     queryKey: ["detail", cPage],
+//     queryFn: searchDetail
+// });
 </script>
 
 <style lang="scss" scoped>

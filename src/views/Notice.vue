@@ -1,7 +1,6 @@
 <template>
     <NoticeSearch />
     <NoticeMain />
-    <NoticeModal />
 </template>
 
 <script>
