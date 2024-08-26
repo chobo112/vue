@@ -2,6 +2,8 @@ import Login from "@/views/Login.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import Notice from "@/views/Notice.vue";
 import DashBoard from "@/views/DashBoard.vue";
+import ComnCodMgr from "@/views/ComnCodMgr.vue";
+import ComnCodMgrDetail from "@/components/page/ComnCodMgr/ComnCodMgrDetail.vue";
 
 const routes = [
     {
@@ -22,6 +24,22 @@ const routes = [
                         path: "notice.do",
                         name: "notice",
                         component: Notice
+                    }
+                ]
+            },
+            {
+                path: "system",
+                name: "system",
+                children: [
+                    {
+                        path: "comnCodMgr.do",
+                        name: "comnCodMgr",
+                        component: ComnCodMgr
+                    },
+                    {
+                        path: ":id",
+                        name: "comnCodMgrDetail",
+                        component: ComnCodMgrDetail
                     }
                 ]
             }

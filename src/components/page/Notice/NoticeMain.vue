@@ -1,11 +1,7 @@
 <template>
     <div class="divComGrpCodList">
-        <NoticeModal
-            v-if="modalState.modalState"
-            @searchList="onApiSuccess"
-            @modalClose="modalClose"
-            :notieSeq="notieSeq"
-        />
+        <NoticeModal v-if="modalState.modalState" @modalClose="modalClose" :notieSeq="notieSeq" />
+        현재 페이지: {{ cPage }} 총 개수: {{ noticeList?.listCount }}
         <table>
             <colgroup>
                 <col width="10%" />
@@ -26,9 +22,7 @@
                 <template v-if="noticeList">
                     <template v-if="noticeList.listCount == 0">
                         <tr>
-                            <td colspan="7">
-                                일치하는 검색 결과가 없습니다
-                            </td>
+                            <td colspan="7">일치하는 검색 결과가 없습니다</td>
                         </tr>
                     </template>
                     <template v-else>
@@ -52,7 +46,6 @@
 </template>
 
 <script setup>
-import { useQuery } from "@tanstack/vue-query";
 import axios from "axios";
 import { useRoute } from "vue-router";
 import NoticeModal from "./NoticeModal.vue";
@@ -63,9 +56,10 @@ const cPage = ref(1);
 const pageSize = ref(5);
 const notieSeq = ref(0);
 const route = useRoute();
+const noticeList = ref();
 
 // 조회
-const searchList = async () => {
+const searchList = () => {
     let param = new URLSearchParams({
         cpage: cPage.value,
         pageSize: pageSize.value,
@@ -74,52 +68,24 @@ const searchList = async () => {
         searchEdDate: route.query.searchStDate || ""
     });
 
-    const result = await axios.post(
-        "/api/board/noticeListJson.do",
-        param
-    );
-    return result.data;
+    axios.post("/api/board/noticeListJson.do", param).then((res) => {
+        noticeList.value = res.data;
+    });
 };
-
-const { data: noticeList, refetch } = useQuery({
-    queryKey: ["user", cPage],
-    queryFn: searchList
-});
-
-watch(
-    () => route.query,
-    () => {
-        refetch();
-    }
-);
 
 // 상세조회
 const handlerDetail = (seq) => {
     if (seq) notieSeq.value = seq;
     modalState.setModalState();
 };
-
-const onApiSuccess = () => {
-    notieSeq.value = 0;
-    refetch();
-};
-
 const modalClose = () => {
     notieSeq.value = 0;
+    searchList();
 };
 
-// const searchDetail = async (param) => {
-//     const result = await axios.post(
-//         "/api/board/noticeDetail.do",
-//         { noticeSeq: param }
-//     );
-//     return result.data;
-// };
-
-// const { data: noticeDetail } = useQuery({
-//     queryKey: ["detail", cPage],
-//     queryFn: searchDetail
-// });
+onMounted(() => {
+    searchList();
+});
 </script>
 
 <style lang="scss" scoped>
