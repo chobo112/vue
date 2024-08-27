@@ -1,4 +1,5 @@
 <template>
+    <ContextBox>상세코드 조회</ContextBox>
     <button @click="$router.go(-1)">뒤로가기</button>
     <button @click="handlerModal()">신규등록</button>
     <table>
@@ -40,6 +41,7 @@ import { useModalStore } from "@/stores/modalState";
 import { useQuery } from "@tanstack/vue-query";
 import axios from "axios";
 import ComnCodMgrDetailModal from "./ComnCodMgrDetailModal.vue";
+import ContextBox from "@/components/common/ContextBox.vue";
 
 const cPage = ref(1);
 const { params } = useRoute();
@@ -70,7 +72,7 @@ const handlerModal = (param) => {
 
 <style lang="scss" scoped>
 table {
-    width: 80%;
+    width: 100%;
     border-collapse: collapse;
     margin: 20px 0px 0px 0px;
     font-size: 18px;
@@ -94,6 +96,33 @@ table {
         background-color: #d3d3d3;
         opacity: 0.9;
         cursor: pointer;
+    }
+}
+button {
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    border: none;
+    color: white;
+    width: 80px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 12px;
+    margin: 10px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0 4px #999;
+    background-color: #3bb2ea;
+    float: inline-end;
+
+    &:hover {
+        background-color: #45a049;
+    }
+
+    &:active {
+        background-color: #3e8e41;
+        box-shadow: 0 2px #666;
+        transform: translateY(2px);
     }
 }
 </style>

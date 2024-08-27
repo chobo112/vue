@@ -38,11 +38,26 @@
             </template>
             <template v-else>
                 <tr>
-                    <td>데이터가 없습니다.</td>
+                    <td colspan="6">데이터가 없습니다.</td>
                 </tr>
             </template>
         </tbody>
     </table>
+    <Pagination
+        :totalItems="listComnGrp?.totalCount || 0"
+        :itemsPerPage="5"
+        :maxPagesShown="5"
+        :onClick="refetch"
+        v-model="cPage"
+    />
+    현재 페이지: {{ cPage }} 총 개수: {{ listComnGrp?.totalCount }}
+    <!-- <VueAwesomePaginate
+        :totalItems="listComnGrp?.totalCount"
+        :items-per-page="5"
+        :max-pages-shown="5"
+        :onClick="refetch"
+        v-model="cPage"
+    /> -->
     <ComnCodMgrModal v-if="modalState.modalState" :grpCodProp="grpCodProp" />
 </template>
 
@@ -51,6 +66,7 @@ import { useQuery } from "@tanstack/vue-query";
 import axios from "axios";
 import ComnCodMgrModal from "./ComnCodMgrModal.vue";
 import { useModalStore } from "@/stores/modalState";
+import Pagination from "@/components/common/Pagination.vue";
 
 const cPage = ref(1);
 const pageSize = ref(5);
@@ -73,6 +89,7 @@ const { data: listComnGrp, refetch } = useQuery({
     queryFn: searchList,
     staleTime: 60 * 1000,
     gcTime: 0
+    // refetchInterval: 1000 자동으로 fetch
 });
 
 const handlerUpdateModal = (e, grpCod) => {
@@ -97,7 +114,7 @@ const routerNavi = (grpCod, grpCodNm) => {
 
 <style lang="scss" scoped>
 table {
-    width: 80%;
+    width: 100%;
     border-collapse: collapse;
     margin: 20px 0px 0px 0px;
     font-size: 18px;
@@ -121,6 +138,42 @@ table {
         background-color: #d3d3d3;
         opacity: 0.9;
         cursor: pointer;
+    }
+}
+
+a {
+    cursor: pointer;
+    &:hover {
+        text-decoration: underline;
+        color: white;
+    }
+}
+
+button {
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    border: none;
+    color: white;
+    width: 80px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 12px;
+    margin: 10px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+    box-shadow: 0 4px #999;
+    background-color: #3bb2ea;
+    float: inline-end;
+
+    &:hover {
+        background-color: #45a049;
+    }
+
+    &:active {
+        background-color: #3e8e41;
+        box-shadow: 0 2px #666;
+        transform: translateY(2px);
     }
 }
 </style>

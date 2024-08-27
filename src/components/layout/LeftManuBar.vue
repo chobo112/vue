@@ -6,39 +6,19 @@
         <img :src="vue_logo" alt="logoImage" />
         <div class="user-info">
             <div></div>
-            <button>로그아웃</button>
+            <button @click="handlerLogout">로그아웃</button>
         </div>
     </div>
     <ul>
-        <li
-            v-for="menu in userInfo.user.usrMnuAtrt"
-            :key="menu.grp_num"
-            class="parent-menu"
-        >
+        <li v-for="menu in userInfo.user.usrMnuAtrt" :key="menu.grp_num" class="parent-menu">
             {{ menu.mnu_nm }}
-            <div
-                class="child-menu-box"
-                @click="handlerClick(menu.mnu_id, $event)"
-                :id="menu.mnu_id"
-            >
-                <template
-                    v-for="node in menu.nodeList"
-                    :key="node.mnu_id"
-                >
-                    <router-link
-                        :to="'/vue' + node.mnu_url"
-                        class="router-link"
-                        replace
-                    >
+            <div class="child-menu-box" @click="handlerClick(menu.mnu_id, $event)" :id="menu.mnu_id">
+                <template v-for="node in menu.nodeList" :key="node.mnu_id">
+                    <router-link :to="'/vue' + node.mnu_url" class="router-link" replace>
                         <div
                             class="child-menu-link"
                             :id="node.mnu_id"
-                            @click="
-                                handlerMenuLinkClick(
-                                    node.mnu_id,
-                                    $event
-                                )
-                            "
+                            @click="handlerMenuLinkClick(node.mnu_id, $event)"
                         >
                             {{ node.mnu_nm }}
                         </div>
@@ -55,11 +35,11 @@ import logo from "../../assets/logo.png";
 import vue_logo from "../../assets/vue_logo.png";
 
 const userInfo = useUserInfo();
+const router = useRouter();
 
 const handlerClick = (menuId, e) => {
     const childMenuId = document.getElementById(menuId);
-    const childMenuClass =
-        document.getElementsByClassName("child-menu-box");
+    const childMenuClass = document.getElementsByClassName("child-menu-box");
     Array.from(childMenuClass).forEach((childMenu) => {
         childMenu.classList.remove("active");
     });
@@ -75,9 +55,7 @@ const handlerClick = (menuId, e) => {
 
 const handlerMenuLinkClick = (menuId, e) => {
     const childLinkId = document.getElementById(menuId);
-    const childLinkClass = document.getElementsByClassName(
-        "child-menu-link"
-    );
+    const childLinkClass = document.getElementsByClassName("child-menu-link");
     Array.from(childLinkClass).forEach((childLink) => {
         childLink.classList.remove("active-link");
     });
@@ -87,6 +65,11 @@ const handlerMenuLinkClick = (menuId, e) => {
     } else {
         childLinkId?.classList.remove();
     }
+};
+
+const handlerLogout = () => {
+    sessionStorage.setItem("userInfo", "");
+    router.push("/");
 };
 </script>
 

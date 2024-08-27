@@ -35,13 +35,20 @@
                             <td>
                                 {{ item.noti_title }}
                             </td>
-                            <td>{{ item.noti_date }}</td>
+                            <td>{{ item.noti_date.substr(0, 10) }}</td>
                             <td>{{ item.loginID }}</td>
                         </tr>
                     </template>
                 </template>
             </tbody>
         </table>
+        <Pagination
+            :totalItems="noticeList?.listCount || 0"
+            v-model="cPage"
+            :items-per-page="5"
+            :max-pages-shown="5"
+            :onClick="searchList"
+        />
     </div>
 </template>
 
@@ -50,6 +57,7 @@ import axios from "axios";
 import { useRoute } from "vue-router";
 import NoticeModal from "./NoticeModal.vue";
 import { useModalStore } from "@/stores/modalState";
+import Pagination from "@/components/common/Pagination.vue";
 
 const modalState = useModalStore();
 const cPage = ref(1);
@@ -65,13 +73,15 @@ const searchList = () => {
         pageSize: pageSize.value,
         searchTitle: route.query.searchTitle || "",
         searchStDate: route.query.searchStDate || "",
-        searchEdDate: route.query.searchStDate || ""
+        searchEdDate: route.query.searchEdDate || ""
     });
 
     axios.post("/api/board/noticeListJson.do", param).then((res) => {
         noticeList.value = res.data;
     });
 };
+
+watch(route, searchList);
 
 // 상세조회
 const handlerDetail = (seq) => {
@@ -90,7 +100,7 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 table {
-    width: 80%;
+    width: 100%;
     border-collapse: collapse;
     margin: 20px 0px 0px 0px;
     font-size: 18px;

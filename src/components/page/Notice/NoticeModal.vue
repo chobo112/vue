@@ -32,6 +32,7 @@
 </template>
 
 <script setup>
+import { nullCheck } from "@/common/nullCheck";
 import { useModalStore } from "@/stores/modalState";
 import { useUserInfo } from "@/stores/userInfo";
 // import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
@@ -103,6 +104,11 @@ const searchDetail = () => {
 // 저장
 
 const noticeSave = () => {
+    const isNull = nullCheck([
+        { inval: noticeDetail.value.noti_title, msg: "제목을 입력해주세요" },
+        { inval: noticeDetail.value.noti_content, msg: "내용을 입력해주세요" }
+    ]);
+    if (!isNull) return;
     const textData = {
         title: noticeDetail.value.noti_title,
         content: noticeDetail.value.noti_content,
@@ -165,6 +171,11 @@ const noticeSave = () => {
 
 // 수정
 const noticeUpdate = () => {
+    const isNull = nullCheck([
+        { inval: noticeDetail.value.noti_title, msg: "제목을 입력해주세요" },
+        { inval: noticeDetail.value.noti_content, msg: "내용을 입력해주세요" }
+    ]);
+    if (!isNull) return;
     const fileForm = new FormData();
     const textData = {
         title: noticeDetail.value.noti_title,

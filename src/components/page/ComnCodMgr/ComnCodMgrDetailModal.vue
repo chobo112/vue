@@ -142,7 +142,17 @@ const { mutate: comnCodDelete } = useMutation({
     z-index: 1;
     font-weight: bold;
 }
-
+.header {
+    background-color: #e0e0e0;
+    padding: 10px 100% 10px 0px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    font-size: 20px;
+    margin-right: auto;
+}
 label {
     display: flex;
     flex-direction: column;

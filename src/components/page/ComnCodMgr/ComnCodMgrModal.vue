@@ -2,7 +2,7 @@
     <teleport to="body">
         <div class="backdrop">
             <div class="container">
-                <div class="header">그룹 코드 관리</div>
+                <div class="header">그룹 코드 상세</div>
                 <div v-if="isLoading">기다려보세요</div>
                 <tbody v-else>
                     <tr>
@@ -40,7 +40,7 @@
                     <button @click="grpCodProp === 'create' ? comnCodInsert() : comnCodUpdate()">
                         {{ grpCodProp === "create" ? "등록" : "수정" }}
                     </button>
-                    <button v-if="grpCodProp !== 'create'">삭제</button>
+                    <button v-if="grpCodProp !== 'create'" @click="comnCodDelete">삭제</button>
                     <button @click="modalState.setModalState">닫기</button>
                 </div>
             </div>
@@ -49,6 +49,7 @@
 </template>
 
 <script setup>
+import ContextBox from "@/components/common/ContextBox.vue";
 import { useModalStore } from "@/stores/modalState";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import axios from "axios";
@@ -84,7 +85,8 @@ const { mutate: comnCodUpdate } = useMutation({
     onSuccess: () => {
         modalState.setModalState();
         queryClient.invalidateQueries({
-            queryKey: ["listComnGrp"]
+            queryKey: ["listComnGrp"],
+            filters: 5
         });
     }
 });
@@ -104,7 +106,7 @@ const { mutate: comnCodInsert } = useMutation({
 });
 
 const comnCodMgrDelete = async () => {
-    await axios.post("/api/system/deleteComnGrpCod.do", grpCodProp);
+    await axios.post("/api/system/deleteComnGrpCodJson.do", { grp_cod: grpCodProp });
 };
 
 const { mutate: comnCodDelete } = useMutation({
@@ -115,20 +117,6 @@ const { mutate: comnCodDelete } = useMutation({
             queryKey: ["listComnGrp"]
         });
     }
-});
-
-// watch(detail, (newDetail) => {
-//     if (newDetail) {
-//         // 여기서 newDetail은 readonly이기 떄문에 그냥 변경할 수 없다. toRaw 사용
-//         comnGrpCodDetail.value = toRaw(newDetail).comnGrpCodModel;
-//     }
-// });
-
-onMounted(() => {
-    // if (cachedData) {
-    //     console.log(cachedData);
-    //     comnGrpCodDetail.value = cachedData.comnGrpCodModel;
-    // }
 });
 </script>
 
@@ -147,7 +135,17 @@ onMounted(() => {
     z-index: 1;
     font-weight: bold;
 }
-
+.header {
+    background-color: #e0e0e0;
+    padding: 10px 100% 10px 0px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    font-size: 20px;
+    margin-right: auto;
+}
 label {
     display: flex;
     flex-direction: column;
@@ -177,6 +175,7 @@ input[type="text"] {
     margin-top: 10px;
     float: inline-end;
 }
+
 button {
     background-color: #3bb2ea;
     border: none;

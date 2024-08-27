@@ -43,12 +43,18 @@ import { useRouter } from "vue-router";
 import logo from "../../../assets/logo.png";
 import { ref } from "vue";
 import { useUserInfo } from "@/stores/userInfo";
+import { nullCheck } from "@/common/nullCheck";
 
 const router = useRouter();
 const loginInfo = ref({});
 const userInfo = useUserInfo();
 
 const handlerLogin = async () => {
+    const isNull = nullCheck([
+        { inval: loginInfo.value.lgn_Id, msg: "id 입력 좀" },
+        { inval: loginInfo.value.pwd, msg: "비밀번호 입력 좀" }
+    ]);
+    if (!isNull) return;
     const result = await userInfo.setUserData(loginInfo.value);
     if (result === "SUCCESS") {
         router.push("/vue");
@@ -67,12 +73,7 @@ const handlerLogin = async () => {
     overflow: hidden;
     width: 100%;
     text-align: center;
-    background-image: radial-gradient(
-        ellipse farthest-corner at 0 140%,
-        #5d9dff 0%,
-        #2178ff 70%,
-        #3585ff 70%
-    );
+    background-image: radial-gradient(ellipse farthest-corner at 0 140%, #5d9dff 0%, #2178ff 70%, #3585ff 70%);
 }
 
 .login-image {
