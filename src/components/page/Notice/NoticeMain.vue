@@ -1,7 +1,6 @@
 <template>
     <div class="divComGrpCodList">
-        <NoticeModal v-if="modalState.modalState" @modalClose="modalClose" :notieSeq="notieSeq" />
-        현재 페이지: {{ cPage }} 총 개수: {{ noticeList?.listCount }}
+        현재 페이지: {{ 0 }} 총 개수: {{ 0 }}
         <table>
             <colgroup>
                 <col width="10%" />
@@ -19,84 +18,16 @@
                 </tr>
             </thead>
             <tbody>
-                <template v-if="noticeList">
-                    <template v-if="noticeList.listCount == 0">
-                        <tr>
-                            <td colspan="7">일치하는 검색 결과가 없습니다</td>
-                        </tr>
-                    </template>
-                    <template v-else>
-                        <tr
-                            v-for="item in noticeList.noticeList"
-                            :key="item.noti_seq"
-                            @click="handlerDetail(item.noti_seq)"
-                        >
-                            <td>{{ item.noti_seq }}</td>
-                            <td>
-                                {{ item.noti_title }}
-                            </td>
-                            <td>{{ item.noti_date.substr(0, 10) }}</td>
-                            <td>{{ item.loginID }}</td>
-                        </tr>
-                    </template>
-                </template>
+                <tr>
+                    <td colspan="7">일치하는 검색 결과가 없습니다</td>
+                </tr>
             </tbody>
         </table>
-        <Pagination
-            :totalItems="noticeList?.listCount || 0"
-            v-model="cPage"
-            :items-per-page="5"
-            :max-pages-shown="5"
-            :onClick="searchList"
-        />
+        <Pagination />
     </div>
 </template>
 
-<script setup>
-import axios from "axios";
-import { useRoute } from "vue-router";
-import NoticeModal from "./NoticeModal.vue";
-import { useModalStore } from "@/stores/modalState";
-import Pagination from "@/components/common/Pagination.vue";
-
-const modalState = useModalStore();
-const cPage = ref(1);
-const pageSize = ref(5);
-const notieSeq = ref(0);
-const route = useRoute();
-const noticeList = ref();
-
-// 조회
-const searchList = () => {
-    let param = new URLSearchParams({
-        cpage: cPage.value,
-        pageSize: pageSize.value,
-        searchTitle: route.query.searchTitle || "",
-        searchStDate: route.query.searchStDate || "",
-        searchEdDate: route.query.searchEdDate || ""
-    });
-
-    axios.post("/api/board/noticeListJson.do", param).then((res) => {
-        noticeList.value = res.data;
-    });
-};
-
-watch(route, searchList);
-
-// 상세조회
-const handlerDetail = (seq) => {
-    if (seq) notieSeq.value = seq;
-    modalState.setModalState();
-};
-const modalClose = () => {
-    notieSeq.value = 0;
-    searchList();
-};
-
-onMounted(() => {
-    searchList();
-});
-</script>
+<script></script>
 
 <style lang="scss" scoped>
 table {
