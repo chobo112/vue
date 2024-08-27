@@ -1,5 +1,5 @@
 <template>
-    <button @click="handlerInsertModal">신규등록</button>
+    <button>신규등록</button>
     <table>
         <colgroup>
             <col width="20%" />
@@ -20,97 +20,16 @@
             </tr>
         </thead>
         <tbody>
-            <template v-if="listComnGrp?.listComnGrpCod.length > 0">
-                <tr
-                    v-for="comnGrp in listComnGrp.listComnGrpCod"
-                    :key="comnGrp.grp_cod"
-                    @click="routerNavi(comnGrp.grp_cod, comnGrp.grp_cod_nm)"
-                >
-                    <td>{{ comnGrp.grp_cod }}</td>
-                    <td>{{ comnGrp.grp_cod_nm }}</td>
-                    <td>{{ comnGrp.grp_cod_eplti }}</td>
-                    <td>{{ comnGrp.use_poa }}</td>
-                    <td>{{ comnGrp.fst_enlm_dtt }}</td>
-                    <td>
-                        <a @click="(e) => handlerUpdateModal(e, comnGrp.grp_cod)">수정</a>
-                    </td>
-                </tr>
-            </template>
-            <template v-else>
-                <tr>
-                    <td colspan="6">데이터가 없습니다.</td>
-                </tr>
-            </template>
+            <tr>
+                <td colspan="6">데이터가 없습니다.</td>
+            </tr>
         </tbody>
     </table>
-    <Pagination
-        :totalItems="listComnGrp?.totalCount || 0"
-        :itemsPerPage="5"
-        :maxPagesShown="5"
-        :onClick="refetch"
-        v-model="cPage"
-    />
-    현재 페이지: {{ cPage }} 총 개수: {{ listComnGrp?.totalCount }}
-    <!-- <VueAwesomePaginate
-        :totalItems="listComnGrp?.totalCount"
-        :items-per-page="5"
-        :max-pages-shown="5"
-        :onClick="refetch"
-        v-model="cPage"
-    /> -->
-    <ComnCodMgrModal v-if="modalState.modalState" :grpCodProp="grpCodProp" />
+
+    현재 페이지: {{ 0 }} 총 개수: {{ 0 }}
 </template>
 
-<script setup>
-import { useQuery } from "@tanstack/vue-query";
-import axios from "axios";
-import ComnCodMgrModal from "./ComnCodMgrModal.vue";
-import { useModalStore } from "@/stores/modalState";
-import Pagination from "@/components/common/Pagination.vue";
-
-const cPage = ref(1);
-const pageSize = ref(5);
-const injectedValue = inject("providedValue");
-const grpCodProp = ref(0);
-const modalState = useModalStore();
-const router = useRouter();
-
-const searchList = async () => {
-    const result = await axios.post("/api/system/listComnGrpCodJson.do", {
-        currentPage: cPage.value,
-        pageSize: pageSize.value,
-        ...injectedValue.value
-    });
-    return result.data;
-};
-
-const { data: listComnGrp, refetch } = useQuery({
-    queryKey: ["listComnGrp", cPage.value, injectedValue],
-    queryFn: searchList,
-    staleTime: 60 * 1000,
-    gcTime: 0
-    // refetchInterval: 1000 자동으로 fetch
-});
-
-const handlerUpdateModal = (e, grpCod) => {
-    e.stopPropagation();
-    grpCodProp.value = grpCod;
-    modalState.setModalState();
-};
-
-const handlerInsertModal = () => {
-    grpCodProp.value = "create";
-    modalState.setModalState();
-};
-
-const routerNavi = (grpCod, grpCodNm) => {
-    router.push({
-        name: "comnCodMgrDetail",
-        params: { id: grpCod },
-        state: { nm: grpCodNm }
-    });
-};
-</script>
+<script></script>
 
 <style lang="scss" scoped>
 table {
